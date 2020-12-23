@@ -22,7 +22,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+LOGFILE='test.log'
 #This async generator will listen to our log file in an infinite while loop (happens in the tail command)
 #Anytime the generator detects a new line in the log file, it will yield it.
 async def logGenerator(request):
@@ -30,7 +30,6 @@ async def logGenerator(request):
         if await request.is_disconnected():
             print("client disconnected!!!")
             break
-        # else:
         yield line
         time.sleep(0.5)
 
