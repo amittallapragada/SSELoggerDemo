@@ -11,6 +11,7 @@ import uvicorn
 from sh import tail
 from fastapi.middleware.cors import CORSMiddleware
 import time 
+import os
 #create our app instance
 app = FastAPI()
 
@@ -22,7 +23,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-LOGFILE='test.log'
+real_path = os.path.realpath(__file__)
+dir_path = os.path.dirname(real_path)
+LOGFILE = f"{dir_path}/test.log"
 #This async generator will listen to our log file in an infinite while loop (happens in the tail command)
 #Anytime the generator detects a new line in the log file, it will yield it.
 async def logGenerator(request):
