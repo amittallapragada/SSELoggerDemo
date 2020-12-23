@@ -1,0 +1,8 @@
+click==7.1.2
+fastapi==0.63.0
+h11==0.11.0
+pydantic==1.7.3
+sh==1.14.1
+sse-starlette==0.6.2
+starlette==0.13.6
+uvicorn==0.13.2
