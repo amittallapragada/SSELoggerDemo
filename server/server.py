@@ -13,6 +13,9 @@ from fastapi.staticfiles import StaticFiles
 from starlette.responses import FileResponse
 import time
 import os
+import threading
+import logging
+
 #create our app instance
 app = FastAPI()
 
@@ -41,5 +44,21 @@ async def runStatus(request: Request):
 async def get_index():
     return FileResponse('client/client.html')
 
-#run the app
-uvicorn.run(app, host="0.0.0.0", port=8000, debug=True)
+def worker():
+    logger = logging.getLogger('log_app')
+    logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler(LOGFILE)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    #infinite while loop printing to our log file.
+    i = 0
+    while True:
+        logger.info(f"log message num: {i}")
+        i += 1
+        time.sleep(0.3)
+
+# start the background worker
+t = threading.Thread(worker)
+t.start()
+t.join()
