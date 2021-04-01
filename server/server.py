@@ -61,4 +61,7 @@ def worker():
 # start the background worker
 t = threading.Thread(target=worker)
 t.start()
-t.join()
+
+if __name__ == '__main__':
+    print('running uvicorn webserver')
+    uvicorn.run(app, host="0.0.0.0", port=8000, debug=True)
