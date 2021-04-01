@@ -37,7 +37,7 @@ async def logGenerator(request):
         if not q.empty():
             line = q.get()
             yield line
-        time.sleep(0.5)
+        #time.sleep(0.5)
 
 #This is our api endpoint. When a client subscribes to this endpoint, they will recieve SSE from our log file
 @app.get('/stream-logs')
