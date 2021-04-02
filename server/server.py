@@ -17,6 +17,7 @@ import os
 import threading
 import logging
 import queue
+import signal
 
 #create our app instance
 app = FastAPI()
@@ -31,13 +32,13 @@ app.mount("/client", StaticFiles(directory=f"{dir_path}/../client"), name="clien
 #Anytime the generator detects a new line in the log file, it will yield it.
 async def logGenerator(request):
     while True:
-        if await request.is_disconnected():
+        if await request.is_disconnected(): # using Nginx Unit this causes a 5 second delay, but allows this generator to detect a shutdown (starlett is not properly notified by Unit otherwise so this will keep running until killed)
             print("client disconnected!!!")
             break
         if not q.empty():
             line = q.get()
             yield line
-        #time.sleep(0.5)
+        time.sleep(0.1)
 
 #This is our api endpoint. When a client subscribes to this endpoint, they will recieve SSE from our log file
 @app.get('/stream-logs')
@@ -52,15 +53,15 @@ async def get_index():
 def worker():
     #infinite while loop printing to our log file.
     i = 0
-    while True:
+    while threading.main_thread().isAlive():
         d = datetime.datetime.now()
+        # tell asyncio to enqueue the result
         q.put(f"{d} - log message num: {i}")
         i += 1
-        time.sleep(0.3)
+        time.sleep(0.2)
 
 # start the background worker
-t = threading.Thread(target=worker)
-t.start()
+threading.Thread(target=worker).start()
 
 if __name__ == '__main__':
     print('running uvicorn webserver')
