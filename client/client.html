@@ -21,7 +21,7 @@
 </div>
 
 <script>
-  var source = new EventSource("http://localhost:8000/stream-logs");
+  var source = new EventSource("stream-logs");
   source.onmessage = function(event) {
     document.getElementById("logs").innerHTML += event.data + "<br>";
   };

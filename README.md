@@ -14,4 +14,4 @@ To run this program you will need python 3 (I used 3.8). Then run the following 
 #### Running the code
 - python server/program.py (runs the app that generates logs)
 - python server/server.py (runs the web server that sends SSE)
-- open client/client.html in a browser to view the events
+- open localhost:8000 in a browser to view the events
