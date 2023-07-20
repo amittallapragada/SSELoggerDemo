@@ -8,7 +8,11 @@ from fastapi import FastAPI, Request
 from sse_starlette.sse import EventSourceResponse
 from datetime import datetime 
 import uvicorn
-from sh import tail
+try:
+    from sh import tail
+except:
+    from tail import tail
+
 from fastapi.middleware.cors import CORSMiddleware
 import time 
 import os
@@ -34,7 +38,7 @@ async def logGenerator(request):
             print("client disconnected!!!")
             break
         yield line
-        time.sleep(0.5)
+        # time.sleep(0.5)
 
 #This is our api endpoint. When a client subscribes to this endpoint, they will recieve SSE from our log file
 @app.get('/stream-logs')
@@ -43,4 +47,4 @@ async def runStatus(request: Request):
     return EventSourceResponse(event_generator)
 
 #run the app
-uvicorn.run(app, host="0.0.0.0", port=8000, debug=True)
+uvicorn.run(app, host="0.0.0.0", port=8000,)
