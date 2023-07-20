@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+  .logs {
+    background-color: black;
+    color:white;
+    height:90vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-align: left;
+    padding-left:10px;
+  }
+  </style>
+</head>
+
+<body>
+
+<h1>Server Logs:</h1>
+<div id="app">
+  <div class="logs" ref="refLogs">
+    <p v-for="line in lines" :style="{color: line.toLowerCase().indexOf('10') > -1 ? 'red' : 'yellow' }">
+      {{line}}
+    </p>
+  </div>
+</div>
+
+<script>
+const { createApp, ref, onMounted } = Vue
+createApp({
+setup() {
+  const lines = ref([])
+  const refLogs  = ref(null)
+  onMounted(()=>{
+    const source =  new EventSource("http://localhost:8000/stream-logs")
+    source.onmessage = (event) => {
+      lines.value.push(event.data)
+      // scroll to bottom
+      refLogs.value.scrollTop = refLogs.value.scrollHeight
+      // keep max queue size
+      if (lines.value.length > 10000) {
+        lines.value.shift()
+      }
+    }
+  })
+  return {
+    lines,
+    refLogs
+  }
+}
+}).mount('#app')
+</script>
+
+</body>
+</html>
+
